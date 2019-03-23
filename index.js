@@ -37,6 +37,20 @@ server.get("/api/zoos/:id", async (req, res) => {
   }
 });
 
+server.post("/api/zoos", async (req, res) => {
+  try {
+    const {name} = req.body;
+    if(!name) {
+      res.status(400).json({message: "Name is required to make a zoo"})
+    }else {
+     const idArray = await db("zoos").insert({name})
+     res.status(201).json({id: idArray[0], name});
+    }
+  } catch(error) {
+    res.status(500).json({message: "Server error", error})
+  }
+})
+
 const port = 3300;
 server.listen(port, function() {
   console.log(`\n=== Web API Listening on http://localhost:${port} ===\n`);
