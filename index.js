@@ -17,7 +17,7 @@ server.get("/api/zoos", async (req, res) => {
     const zoos = await db.select("*").from("zoos");
     res.status(200).json(zoos);
   } catch (error) {
-    res.status(400).json(error);
+    res.status(500).json(error);
   }
 });
 
@@ -44,7 +44,7 @@ server.post("/api/zoos", async (req, res) => {
       res.status(400).json({ message: "Name is required to make a zoo" });
     } else {
       const idArray = await db("zoos").insert({ name });
-      res.status(201).json({ id: idArray[0], name });
+      res.status(201).json(idArray[0]);
     }
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
