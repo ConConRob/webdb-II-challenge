@@ -39,17 +39,37 @@ server.get("/api/zoos/:id", async (req, res) => {
 
 server.post("/api/zoos", async (req, res) => {
   try {
-    const {name} = req.body;
-    if(!name) {
-      res.status(400).json({message: "Name is required to make a zoo"})
-    }else {
-     const idArray = await db("zoos").insert({name})
-     res.status(201).json({id: idArray[0], name});
+    const { name } = req.body;
+    if (!name) {
+      res.status(400).json({ message: "Name is required to make a zoo" });
+    } else {
+      const idArray = await db("zoos").insert({ name });
+      res.status(201).json({ id: idArray[0], name });
     }
-  } catch(error) {
-    res.status(500).json({message: "Server error", error})
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
   }
-})
+});
+
+server.put("/api/zoos/:id", async (req, res) => {
+  try {
+    const { name } = req.body;
+    if (!name) {
+      res.status(400).json({ message: "Name is required to update a zoo" });
+    } else {
+      const numUpdated = await db("zoos")
+        .where("id", "=", req.params.id)
+        .update({ name });
+      if (numUpdated === 0) {
+        res.status(200).message({ message: "Failed to update zoo" });
+      } else {
+        res.status(201).json({ id: req.params.id, name });
+      }
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+});
 
 const port = 3300;
 server.listen(port, function() {
